@@ -17,6 +17,8 @@ namespace Canama_Pad
         {
             InitializeComponent();
             UpdateStatusLabel("Ready");
+            UpdateLnClStatus();
+            statusStrip1.Visible = false;
         }
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -159,5 +161,33 @@ namespace Canama_Pad
         {
             toolStripStatusLabel1.Text = status;
         }
+
+        private void richTextBox1_SelectionChanged(object sender, EventArgs e)
+        {
+            UpdateLnClStatus();
+        }
+
+        private void UpdateLnClStatus()
+        {
+            int pos = richTextBox1.SelectionStart;
+            int line = richTextBox1.GetLineFromCharIndex(pos) + 1;
+            int col = pos - richTextBox1.GetFirstCharIndexOfCurrentLine() + 1;
+
+            toolStripStatusLabel2.Text = "Ln " + line + ", " + "Col " + col;
+        }
+
+        private void statusBarToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if(status.Checked)
+            {
+                statusStrip1.Visible = true;
+            }
+            else
+            {
+                statusStrip1.Visible = false;
+            }        
+        }
+
+
     }
 }
