@@ -238,8 +238,8 @@ namespace Canama_Pad
                 this.Text = sv.FileName;
             }
             else
-            {  
-                richTextBox1.SaveFile(Path.GetFileName(this.Text), RichTextBoxStreamType.RichText);
+            {
+                richTextBox1.SaveFile(Path.GetFileName(this.Text), RichTextBoxStreamType.PlainText);
             }                        
         }
         
