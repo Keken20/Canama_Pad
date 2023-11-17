@@ -11,6 +11,7 @@ using System.IO;
 
 namespace Canama_Pad
 {
+    
     public partial class Form1 : Form
     {
         public Form1()
@@ -20,36 +21,62 @@ namespace Canama_Pad
             UpdateLnClStatus();
             statusStrip1.Visible = false;
         }
+        string filelName;
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.Text = "Canama_Pad";
-            richTextBox1.Text = "";
+            if (SaveChanges == false)
+            {
+                this.Text = "Canama_Pad";
+                richTextBox1.Text = "";
+                SaveChanges = false;
+            }
+            else
+            {
+                DialogResult result = MessageBox.Show("Do you want to save changes?", "Save Changes", MessageBoxButtons.YesNoCancel);
+
+                if (result == DialogResult.Yes)
+                {
+                    SaveDialog();
+                    SaveChanges = false;
+                }
+                else if(result == DialogResult.No)
+                {
+                    this.Text = "Canama_Pad";
+                    richTextBox1.Text = "";
+                    SaveChanges = false;
+                }
+            }         
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenFileDialog op = new OpenFileDialog();
-            op.Title = "open";
-            op.Filter = "Text Document(*.txt)|*.txt| All Files(*.*)|*.*";
-            if (op.ShowDialog() == DialogResult.OK)
+            if (SaveChanges == false)
             {
-                string filelName = Path.GetFileName(op.FileName);
-                richTextBox1.LoadFile(op.FileName, RichTextBoxStreamType.PlainText);
-                this.Text = filelName;
+                OpenDialog();
                 SaveChanges = false;
-            }          
+            }
+            else
+            {
+                DialogResult result = MessageBox.Show("Do you want to save changes?", "Save Changes", MessageBoxButtons.YesNoCancel);
+                if (result == DialogResult.Yes)
+                {
+                    SaveDialog();
+                    SaveChanges = false;
+                }
+                else if (result == DialogResult.No)
+                {
+                    OpenDialog();
+                    SaveChanges = false;
 
+                }
+            }
+             
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            SaveFileDialog op = new SaveFileDialog();
-            op.Title = "Save";
-            op.Filter = "Text Document(*.txt)|*.txt| All Files(*.*)|*.*";
-            if (op.ShowDialog() == DialogResult.OK)
-                richTextBox1.SaveFile(op.FileName, RichTextBoxStreamType.PlainText);
-            this.Text = op.FileName;
-
+                SaveDialog();
+                SaveChanges = false;                        
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -134,12 +161,7 @@ namespace Canama_Pad
 
                 if (result == DialogResult.Yes)
                 {
-                    SaveFileDialog sv = new SaveFileDialog();
-                    sv.Title = "Save";
-                    sv.Filter = "Text Document(.txt)|.txt| All Files(.)|.";
-                    if (sv.ShowDialog() == DialogResult.OK)
-                        richTextBox1.SaveFile(sv.FileName, RichTextBoxStreamType.PlainText);
-                    this.Text = sv.FileName;
+                    SaveDialog();
                 }
                 else if (result == DialogResult.Cancel)
                 {
@@ -151,9 +173,13 @@ namespace Canama_Pad
         private void richTextBox1_TextChanged(object sender, EventArgs e)
         {
             SaveChanges = true;
-            if(string.IsNullOrEmpty(richTextBox1.Text))
+            if (string.IsNullOrEmpty(richTextBox1.Text))
             {
                 SaveChanges = false;
+            }
+            else
+            {
+                SaveChanges = true;
             }
         }
 
@@ -187,6 +213,36 @@ namespace Canama_Pad
                 statusStrip1.Visible = false;
             }        
         }
+        private void OpenDialog()
+        {
+            OpenFileDialog op = new OpenFileDialog();
+            op.Title = "open";
+            op.Filter = "Text Document(*.txt)|*.txt| All Files(*.*)|*.*";
+            if (op.ShowDialog() == DialogResult.OK)
+            {
+                filelName = Path.GetFileName(op.FileName);
+                richTextBox1.LoadFile(op.FileName, RichTextBoxStreamType.PlainText);
+                this.Text = filelName;
+                SaveChanges = false;
+            }
+        }
+        private void SaveDialog()
+        {
+            if(this.Text == "Canama_Pad")
+            {
+                SaveFileDialog sv = new SaveFileDialog();
+                sv.Title = "Save";
+                sv.Filter = "Text Document(.txt)|.txt| All Files(.)|.";
+                if (sv.ShowDialog() == DialogResult.OK)
+                    richTextBox1.SaveFile(sv.FileName, RichTextBoxStreamType.PlainText);
+                this.Text = sv.FileName;
+            }
+            else
+            {  
+                richTextBox1.SaveFile(Path.GetFileName(this.Text), RichTextBoxStreamType.RichText);
+            }                        
+        }
+        
 
 
     }
